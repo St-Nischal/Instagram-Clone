@@ -2,15 +2,13 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use MongoDB\Laravel\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use Notifiable;
 
     protected $connection = 'mongodb';
     protected $table = 'users';
@@ -36,22 +34,16 @@ class User extends Authenticatable
 
     public function posts(): HasMany
     {
-        return $this->hasMany(related: Post::class);
+        return $this->hasMany(Post::class);
     }
 
     public function likes(): HasMany
     {
-        return $this->hasMany(related: Like::class);
+        return $this->hasMany(Like::class);
     }
 
     public function comments(): HasMany
     {
-        return $this->hasMany(related: Comment::class);
-    }
-
-
-    public function followers(): HasMany
-    {
-        return $this->hasMany(related: Follow::class, foreignKey: 'followed_id');
+        return $this->hasMany(Comment::class);
     }
 }

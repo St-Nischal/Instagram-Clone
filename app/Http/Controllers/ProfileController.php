@@ -2,53 +2,53 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
-    //
-
-    public function index(User $user): View
+    public function index(User $user)
     {
-        return view(view:'profiles.index', data: compact(var_name:'user'));
+        return view('profiles.index', compact('user'));
     }
 
-    public function edit(User $user): View
+    public function edit(User $user)
     {
+        // Check if the authenticated user is the same as the profile user
         if (auth()->id() !== $user->id) {
-            abort(code:403, message: 'Unauthorized action.');
+            abort(403, 'Unauthorized action.');
         }
-        return view(view:'profiles.edit', data: compact(var_name:'user'));
+        
+        return view('profiles.edit', compact('user'));
     }
 
-    public function update (Request $request, User $user): RedirectResponse
+    public function update(Request $request, User $user)
     {
+        // Check if the authenticated user is the same as the profile user
         if (auth()->id() !== $user->id) {
-            abort(code:403, message: 'Unauthorized action.');
+            abort(403, 'Unauthorized action.');
         }
 
-        $data = $request->validate(rules: [
-            'name' => 'required|string|max:255',
-            'username' => 'required|email|max:255|unique:users,email,' . $user->id,
-            'bio' => 'nullable|string|max:500',
-            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        $data = $request->validate([
+            'name' => 'required',
+            'username' => 'required',
+            'bio' => 'nullable',
+            'profile_image' => 'image|nullable|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        if($request->hasFile(key:'profile_image')){
-            //Delete the old profile image if it exists
+        if ($request->hasFile('profile_image')) {
+            // Delete old profile image if exists
             if ($user->profile_image) {
-                Storage::disk(name:'public')->delete(path:$user->profile_image);
+                Storage::disk('public')->delete($user->profile_image);
             }
-            $imagePath = $request->file(key:'profile_image')->store(path:'profile', options:'public');
+            
+            $imagePath = $request->file('profile_image')->store('profile', 'public');
             $data['profile_image'] = $imagePath;
-
         }
 
-        $user->update(attributes: $data);
+        $user->update($data);
 
-        return redirect(to:'/profile/' . $user->id)->with(message: 'Profile updated successfully.');
+        return redirect("/profile/{$user->id}");
     }
-
 }
