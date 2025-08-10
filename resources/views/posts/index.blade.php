@@ -8,7 +8,7 @@
                 <div class="card">
                     <div class="card-header d-flex align-items-center">
                         @if($post->user)
-                            <img src="{{ $post->user->profile_image ? asset('storage/' . $post->user->profile_image) : 'https://via.placeholder.com/40' }}" class="rounded-circle me-3" style="width: 40px; height: 40px;">
+                            <img src="{{ $post->user->profile_image ? Storage::disk('profile_pic')->url($post->user->profile_image) : 'https://via.placeholder.com/40' }}" class="rounded-circle me-3" style="width: 40px; height: 40px;">
                             <a href="{{ route('profile.show', $post->user->id) }}" class="text-dark text-decoration-none">
                                 <strong>{{ $post->user->username }}</strong>
                             </a>
@@ -17,7 +17,7 @@
                             <span class="text-muted">Deleted User</span>
                         @endif
                     </div>
-                    <img src="{{ asset('storage/' . $post->image_path) }}" class="card-img-top">
+                    <img src="{{ Storage::disk('post_images')->url($post->image_path) }}" class="card-img-top">
                     <div class="card-body">
                         <div class="d-flex mb-2">
                             @if($post->likes->where('user_id', auth()->id())->count() > 0)

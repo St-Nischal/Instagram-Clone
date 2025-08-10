@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Comments;
+use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Http\Request;
 
@@ -27,7 +27,7 @@ class CommentController extends Controller
         return redirect('/posts/' . $post->id);
     }
 
-    public function destroy(Comments $comment)
+    public function destroy(Comment $comment)
     {
         // Check if the authenticated user is the comment owner or post owner
         if (auth()->id() !== $comment->user_id && auth()->id() !== $comment->post->user_id) {

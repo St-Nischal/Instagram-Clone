@@ -4,9 +4,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-3 text-center">
-            <img src="{{ $user->profile_image ? asset('storage/' . $user->profile_image) : 'https://via.placeholder.com/150' }}" class="rounded-circle w-100" style="max-width: 150px;">
-        </div>
-        <div class="col-md-9">
+        <img src="{{ $user->profile_image ? \Illuminate\Support\Facades\Storage::disk('profile_pic')->url($user->profile_image) : 'https://via.placeholder.com/150' }}" class="rounded-circle w-100" style="max-width: 150px;">
             <div class="d-flex align-items-center">
                 <h1>{{ $user->username }}</h1>
                 @if(auth()->id() === $user->id)
@@ -29,7 +27,7 @@
         @foreach($user->posts as $post)
             <div class="col-md-4 mb-4">
                 <a href="{{ route('posts.show', $post->id) }}">
-                  <img src="{{ asset('storage/' . $post->image_path) }}" class="w-100">
+                  <img src="{{ \Illuminate\Support\Facades\Storage::disk('post_images')->url($post->image_path) }}" class="w-100">
                 </a>
             </div>
         @endforeach

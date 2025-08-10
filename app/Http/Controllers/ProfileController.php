@@ -15,7 +15,6 @@ class ProfileController extends Controller
 
     public function edit(User $user)
     {
-        // Check if the authenticated user is the same as the profile user
         if (auth()->id() !== $user->id) {
             abort(403, 'Unauthorized action.');
         }
@@ -25,7 +24,6 @@ class ProfileController extends Controller
 
     public function update(Request $request, User $user)
     {
-        // Check if the authenticated user is the same as the profile user
         if (auth()->id() !== $user->id) {
             abort(403, 'Unauthorized action.');
         }
@@ -38,12 +36,14 @@ class ProfileController extends Controller
         ]);
 
         if ($request->hasFile('profile_image')) {
-            // Delete old profile image if exists
+            // Delete old profile image from S3 if exists
             if ($user->profile_image) {
-                Storage::disk('public')->delete($user->profile_image);
+                Storage::disk('profile_pic')->delete($user->profile_image);
             }
             
-            $imagePath = $request->file('profile_image')->store('profile', 'public');
+            // Store new profile image on S3 disk 'profile_pic'
+            // No folder specified since 'root' => 'profile_pics' already set in disk config
+            $imagePath = $request->file('profile_image')->store('', 'profile_pic');
             $data['profile_image'] = $imagePath;
         }
 

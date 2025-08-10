@@ -33,14 +33,10 @@ Route::get('/profile/{user}/edit', [ProfileController::class, 'edit'])->name('pr
 Route::patch('/profile/{user}', [ProfileController::class, 'update'])->name('profile.update');
 
 // Comment routes
-Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
-Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+Route::post('/posts/{post}/comment', [CommentController::class, 'store'])->name('comments.store');
+Route::delete('/comment/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 
 // Like routes
 Route::post('/posts/{post}/likes', [LikeController::class, 'store'])->name('likes.store');
 Route::delete('/posts/{post}/likes', [LikeController::class, 'destroy'])->name('likes.destroy');
-
-
-        
-
 

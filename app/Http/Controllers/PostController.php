@@ -31,7 +31,8 @@ class PostController extends Controller
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $imagePath = $request->file('image')->store('uploads', 'public');
+        // Store image on the S3 'post_images' disk in 'post_images' folder (root is set to 'post_images' so it goes inside that folder)
+        $imagePath = $request->file('image')->store('', 'post_images');
 
         auth()->user()->posts()->create([
             'caption' => $data['caption'],
@@ -48,7 +49,6 @@ class PostController extends Controller
 
     public function edit(Post $post)
     {
-        // Check if the authenticated user is the same as the post user
         if (auth()->id() !== $post->user_id) {
             abort(403, 'Unauthorized action.');
         }
@@ -58,7 +58,6 @@ class PostController extends Controller
 
     public function update(Request $request, Post $post)
     {
-        // Check if the authenticated user is the same as the post user
         if (auth()->id() !== $post->user_id) {
             abort(403, 'Unauthorized action.');
         }
@@ -74,15 +73,13 @@ class PostController extends Controller
 
     public function destroy(Post $post)
     {
-        // Check if the authenticated user is the same as the post user
         if (auth()->id() !== $post->user_id) {
             abort(403, 'Unauthorized action.');
         }
         
-        // Delete the image file
-        Storage::disk('public')->delete($post->image_path);
+        // Delete the image from the 'post_images' disk
+        Storage::disk('post_images')->delete($post->image_path);
         
-        // Delete the post
         $post->delete();
 
         return redirect('/profile/' . auth()->user()->id);
